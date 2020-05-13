@@ -7,7 +7,7 @@ const RestrictionForm = (props) => {
   const { register, handleSubmit } = useForm();
   const onSubmit = (data) => console.log(data);
   return (
-    <Card style={{ padding: '1rem' }}>
+    <Card style={{ padding: '1rem' }} className="shadow-lg rounded">
       <Form onSubmit={handleSubmit(onSubmit)}>
         <FormGroup>
           <Label for="minRating">Select minimum rating of visited places</Label>

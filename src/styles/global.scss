@@ -1,11 +1,17 @@
+@import './colors.scss';
+
 html {
   font-size: 100%;
-  background-color: #fff;
+  background-color: $background;
 }
 
 html,
 body {
   font-family: 'Poppins', sans-serif;
+}
+
+#app {
+  background-color: $background;
 }
 
 p,
