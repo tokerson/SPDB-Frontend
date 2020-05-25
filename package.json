@@ -33,6 +33,7 @@
   "license": "MIT",
   "dependencies": {
     "@hot-loader/react-dom": "16.10.2",
+    "axios": "0.19.2",
     "bootstrap": "4.5.0",
     "connected-react-router": "6.5.2",
     "dotenv": "8.2.0",
