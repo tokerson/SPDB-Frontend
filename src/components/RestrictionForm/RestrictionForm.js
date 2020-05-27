@@ -1,11 +1,26 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import axios from 'axios';
 import { useForm } from 'react-hook-form';
-import { Card, Form, FormGroup, Label, Input, Button, Select } from 'reactstrap';
+import { Card, Form, FormGroup, Label, Input, Button } from 'reactstrap';
+import Select from 'react-select';
+
+const HOST = 'http://localhost:8080';
 
 const RestrictionForm = (props) => {
-  const { register, handleSubmit } = useForm();
+  const { register, setValue, watch, handleSubmit } = useForm();
+  const [categories, setCategories] = React.useState({});
+
+  React.useEffect(() => {
+    register({ name: 'categories' });
+    axios.get(`${HOST}/api/categories`).then((res) => {
+      console.log(res.data);
+      setCategories(res.data);
+    });
+  }, []);
+
   const onSubmit = (data) => console.log(data);
+
   return (
     <Card style={{ padding: '1rem' }} className="shadow-lg rounded">
       <Form onSubmit={handleSubmit(onSubmit)}>
@@ -21,7 +36,30 @@ const RestrictionForm = (props) => {
         </FormGroup>
         <FormGroup>
           <Label for="averageTimeSpent">How long do you plan to stay in one place?</Label>
-          <Input innerRef={register} type="time" name="averageTimeSpent" id="averageTimeSpent" placeholder="time placeholder" />
+          <Input
+            innerRef={register}
+            type="time"
+            name="averageTimeSpent"
+            id="averageTimeSpent"
+            placeholder="time placeholder"
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label for="averageTimeSpent">
+            Select categories that you may be interested in visiting
+          </Label>
+          <Select
+            name="categories"
+            isMulti
+            onChange={(value, action) => {
+              const inputRef = action.name;
+              const currentValue = watch(inputRef);
+              setValue(inputRef, value);
+            }}
+            options={Object.keys(categories).map((key) => {
+              return { value: key, label: categories[key] };
+            })}
+          />
         </FormGroup>
         <FormGroup>
           <Button type="submit" color="primary">
