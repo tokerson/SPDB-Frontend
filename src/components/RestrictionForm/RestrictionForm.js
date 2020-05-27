@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { Card, Form, FormGroup, Label, Input, Button } from 'reactstrap';
@@ -7,8 +6,8 @@ import Select from 'react-select';
 
 const HOST = 'http://localhost:8080';
 
-const RestrictionForm = (props) => {
-  const { register, setValue, watch, handleSubmit } = useForm();
+const RestrictionForm = () => {
+  const { register, setValue, handleSubmit } = useForm();
   const [categories, setCategories] = React.useState({});
 
   React.useEffect(() => {
@@ -19,7 +18,23 @@ const RestrictionForm = (props) => {
     });
   }, []);
 
-  const onSubmit = (data) => console.log(data);
+  const onSubmit = (data) => {
+    console.log(convertFormData(data));
+  };
+
+  const convertFormData = (data) => {
+    const convertHoursToSeconds = (timeString) => {
+      //timeString should be in format HH:MM
+      const [hour, minute] = timeString.trim().split(':');
+      return hour * 3600 + minute * 60;
+    };
+
+    return {
+      ...data,
+      averageTimeSpent: convertHoursToSeconds(data.averageTimeSpent),
+      additionalTime: convertHoursToSeconds(data.additionalTime),
+    };
+  };
 
   return (
     <Card style={{ padding: '1rem' }} className="shadow-lg rounded">
@@ -45,15 +60,32 @@ const RestrictionForm = (props) => {
           />
         </FormGroup>
         <FormGroup>
-          <Label for="averageTimeSpent">
-            Select categories that you may be interested in visiting
-          </Label>
+          <Label for="additionalTime">By how long can your trip be extended?</Label>
+          <Input
+            innerRef={register}
+            type="time"
+            name="additionalTime"
+            id="additionalTime"
+            placeholder="time placeholder"
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label for="startTime">At what time do you plan to start your trip?</Label>
+          <Input
+            innerRef={register}
+            type="time"
+            name="startTime"
+            id="startTime"
+            placeholder="time placeholder"
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label for="categories">Select categories that you may be interested in visiting</Label>
           <Select
             name="categories"
             isMulti
             onChange={(value, action) => {
               const inputRef = action.name;
-              const currentValue = watch(inputRef);
               setValue(inputRef, value);
             }}
             options={Object.keys(categories).map((key) => {
