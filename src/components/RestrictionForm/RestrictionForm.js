@@ -1,12 +1,13 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
-import { Card, Form, FormGroup, Label, Input, Button } from 'reactstrap';
+import { Card, Form, FormGroup, Label, Input, Button, CustomInput } from 'reactstrap';
 import Select from 'react-select';
 
 const HOST = 'http://localhost:8080';
 
-const RestrictionForm = () => {
+const RestrictionForm = ({ origin, destination }) => {
   const { register, setValue, handleSubmit } = useForm();
   const [categories, setCategories] = React.useState({});
 
@@ -95,6 +96,28 @@ const RestrictionForm = () => {
           />
         </FormGroup>
         <FormGroup>
+          <Label for="origin">Origin</Label>
+          <Input
+            innerRef={register}
+            type="text"
+            name="origin"
+            id="origin"
+            value={origin && `${origin.lat()},${origin.lng()}`}
+            readOnly
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label for="destination">Destination</Label>
+          <Input
+            innerRef={register}
+            type="text"
+            name="destination"
+            id="destination"
+            value={destination && `${destination.lat()},${destination.lng()}`}
+            readOnly
+          />
+        </FormGroup>
+        <FormGroup>
           <Button type="submit" color="primary">
             Submit
           </Button>
@@ -104,6 +127,9 @@ const RestrictionForm = () => {
   );
 };
 
-RestrictionForm.propTypes = {};
+RestrictionForm.propTypes = {
+  origin: PropTypes.object,
+  destination: PropTypes.object,
+};
 
 export default RestrictionForm;
