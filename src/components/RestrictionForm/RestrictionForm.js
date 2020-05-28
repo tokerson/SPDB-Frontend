@@ -31,8 +31,9 @@ const RestrictionForm = () => {
 
     return {
       ...data,
-      averageTimeSpent: convertHoursToSeconds(data.averageTimeSpent),
+      timeInPoi: convertHoursToSeconds(data.timeInPoi),
       additionalTime: convertHoursToSeconds(data.additionalTime),
+      searchingStart: convertHoursToSeconds(data.searchingStart),
     };
   };
 
@@ -50,12 +51,12 @@ const RestrictionForm = () => {
           </Input>
         </FormGroup>
         <FormGroup>
-          <Label for="averageTimeSpent">How long do you plan to stay in one place?</Label>
+          <Label for="timeInPoi">How long do you plan to stay in one place?</Label>
           <Input
             innerRef={register}
             type="time"
-            name="averageTimeSpent"
-            id="averageTimeSpent"
+            name="timeInPoi"
+            id="timeInPoi"
             placeholder="time placeholder"
           />
         </FormGroup>
@@ -70,12 +71,12 @@ const RestrictionForm = () => {
           />
         </FormGroup>
         <FormGroup>
-          <Label for="startTime">At what time do you plan to start your trip?</Label>
+          <Label for="searchingStart">At what time do you plan to start your trip?</Label>
           <Input
             innerRef={register}
             type="time"
-            name="startTime"
-            id="startTime"
+            name="searchingStart"
+            id="searchingStart"
             placeholder="time placeholder"
           />
         </FormGroup>
