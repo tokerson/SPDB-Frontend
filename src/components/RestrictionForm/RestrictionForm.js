@@ -2,13 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
-import { Card, Form, FormGroup, Label, Input, Button, CustomInput } from 'reactstrap';
+import { Card, Form, FormGroup, Label, Input, Button, FormFeedback } from 'reactstrap';
 import Select from 'react-select';
 
 const HOST = 'http://localhost:8080';
 
 const RestrictionForm = ({ origin, destination }) => {
-  const { register, setValue, handleSubmit } = useForm();
+  const { register, errors, setValue, handleSubmit } = useForm();
   const [categories, setCategories] = React.useState({});
 
   React.useEffect(() => {
@@ -35,6 +35,7 @@ const RestrictionForm = ({ origin, destination }) => {
       timeInPoi: convertHoursToSeconds(data.timeInPoi),
       additionalTime: convertHoursToSeconds(data.additionalTime),
       searchingStart: convertHoursToSeconds(data.searchingStart),
+      additionalDistance: parseInt(data.additionalDistance) * 1000,
     };
   };
 
@@ -72,13 +73,27 @@ const RestrictionForm = ({ origin, destination }) => {
           />
         </FormGroup>
         <FormGroup>
-          <Label for="searchingStart">At what time do you plan to start your trip?</Label>
+          <Label for="searchingStart">
+            At what time from start do you want to visit first place?
+          </Label>
           <Input
             innerRef={register}
             type="time"
             name="searchingStart"
             id="searchingStart"
             placeholder="time placeholder"
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label for="additionalDistance">
+            What is the maximum additional distance you are willing to make (km)
+          </Label>
+          <Input
+            innerRef={register}
+            type="number"
+            name="additionalDistance"
+            id="additionalDistance"
+            min="0"
           />
         </FormGroup>
         <FormGroup>
@@ -98,24 +113,32 @@ const RestrictionForm = ({ origin, destination }) => {
         <FormGroup>
           <Label for="origin">Origin</Label>
           <Input
-            innerRef={register}
+            innerRef={register({ required: true })}
             type="text"
             name="origin"
             id="origin"
+            invalid={errors.origin && !origin}
             value={origin && `${origin.lat()},${origin.lng()}`}
             readOnly
           />
+          {errors.origin && (
+            <FormFeedback>Select trip origin by left clicking on the map</FormFeedback>
+          )}
         </FormGroup>
         <FormGroup>
           <Label for="destination">Destination</Label>
           <Input
-            innerRef={register}
+            innerRef={register({ required: true })}
             type="text"
             name="destination"
             id="destination"
+            invalid={errors.destination && !destination}
             value={destination && `${destination.lat()},${destination.lng()}`}
             readOnly
           />
+          {errors.destination && (
+            <FormFeedback>Select trip destination by right clicking on the map</FormFeedback>
+          )}
         </FormGroup>
         <FormGroup>
           <Button type="submit" color="primary">
