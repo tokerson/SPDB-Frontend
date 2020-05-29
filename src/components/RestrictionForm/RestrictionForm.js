@@ -1,11 +1,44 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import axios from 'axios';
 import { useForm } from 'react-hook-form';
-import { Card, Form, FormGroup, Label, Input, Button, Select } from 'reactstrap';
+import { Card, Form, FormGroup, Label, Input, Button, FormFeedback } from 'reactstrap';
+import Select from 'react-select';
 
-const RestrictionForm = (props) => {
-  const { register, handleSubmit } = useForm();
-  const onSubmit = (data) => console.log(data);
+const HOST = 'http://localhost:8080';
+
+const RestrictionForm = ({ origin, destination }) => {
+  const { register, errors, setValue, handleSubmit } = useForm();
+  const [categories, setCategories] = React.useState({});
+
+  React.useEffect(() => {
+    register({ name: 'categories' });
+    axios.get(`${HOST}/api/categories`).then((res) => {
+      console.log(res.data);
+      setCategories(res.data);
+    });
+  }, []);
+
+  const onSubmit = (data) => {
+    console.log(convertFormData(data));
+  };
+
+  const convertFormData = (data) => {
+    const convertHoursToSeconds = (timeString) => {
+      //timeString should be in format HH:MM
+      const [hour, minute] = timeString.trim().split(':');
+      return hour * 3600 + minute * 60;
+    };
+
+    return {
+      ...data,
+      timeInPoi: convertHoursToSeconds(data.timeInPoi),
+      additionalTime: convertHoursToSeconds(data.additionalTime),
+      searchingStart: convertHoursToSeconds(data.searchingStart),
+      additionalDistance: parseInt(data.additionalDistance) * 1000,
+    };
+  };
+
   return (
     <Card style={{ padding: '1rem' }} className="shadow-lg rounded">
       <Form onSubmit={handleSubmit(onSubmit)}>
@@ -20,8 +53,92 @@ const RestrictionForm = (props) => {
           </Input>
         </FormGroup>
         <FormGroup>
-          <Label for="averageTimeSpent">How long do you plan to stay in one place?</Label>
-          <Input innerRef={register} type="time" name="averageTimeSpent" id="averageTimeSpent" placeholder="time placeholder" />
+          <Label for="timeInPoi">How long do you plan to stay in one place?</Label>
+          <Input
+            innerRef={register}
+            type="time"
+            name="timeInPoi"
+            id="timeInPoi"
+            placeholder="time placeholder"
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label for="additionalTime">By how long can your trip be extended?</Label>
+          <Input
+            innerRef={register}
+            type="time"
+            name="additionalTime"
+            id="additionalTime"
+            placeholder="time placeholder"
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label for="searchingStart">
+            At what time from start do you want to visit first place?
+          </Label>
+          <Input
+            innerRef={register}
+            type="time"
+            name="searchingStart"
+            id="searchingStart"
+            placeholder="time placeholder"
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label for="additionalDistance">
+            What is the maximum additional distance you are willing to make (km)
+          </Label>
+          <Input
+            innerRef={register}
+            type="number"
+            name="additionalDistance"
+            id="additionalDistance"
+            min="0"
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label for="categories">Select categories that you may be interested in visiting</Label>
+          <Select
+            name="categories"
+            isMulti
+            onChange={(value, action) => {
+              const inputRef = action.name;
+              setValue(inputRef, value);
+            }}
+            options={Object.keys(categories).map((key) => {
+              return { value: key, label: categories[key] };
+            })}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label for="origin">Origin</Label>
+          <Input
+            innerRef={register({ required: true })}
+            type="text"
+            name="origin"
+            id="origin"
+            invalid={errors.origin && !origin}
+            value={origin && `${origin.lat()},${origin.lng()}`}
+            readOnly
+          />
+          {errors.origin && (
+            <FormFeedback>Select trip origin by left clicking on the map</FormFeedback>
+          )}
+        </FormGroup>
+        <FormGroup>
+          <Label for="destination">Destination</Label>
+          <Input
+            innerRef={register({ required: true })}
+            type="text"
+            name="destination"
+            id="destination"
+            invalid={errors.destination && !destination}
+            value={destination && `${destination.lat()},${destination.lng()}`}
+            readOnly
+          />
+          {errors.destination && (
+            <FormFeedback>Select trip destination by right clicking on the map</FormFeedback>
+          )}
         </FormGroup>
         <FormGroup>
           <Button type="submit" color="primary">
@@ -33,6 +150,9 @@ const RestrictionForm = (props) => {
   );
 };
 
-RestrictionForm.propTypes = {};
+RestrictionForm.propTypes = {
+  origin: PropTypes.object,
+  destination: PropTypes.object,
+};
 
 export default RestrictionForm;

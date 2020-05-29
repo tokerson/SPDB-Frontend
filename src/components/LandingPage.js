@@ -4,17 +4,24 @@ import RestrictionForm from './RestrictionForm/RestrictionForm';
 import Map from './Map/Map';
 
 const LandingPage = () => {
-  console.log(process.env);
-  console.log(process.env.GOOGLE_MAPS_API_KEY);
+  const [origin, setOrigin] = React.useState(null);
+  const [destination, setDestination] = React.useState(null);
+
+  console.log(origin, destination);
   return (
     <div style={{ marginTop: '3rem' }}>
       <Row>
         <Col>
-          <RestrictionForm />
+          <RestrictionForm origin={origin} destination={destination} />
         </Col>
         <Col>
           <div className="shadow-lg rounded">
-            <Map />
+            <Map
+              origin={origin}
+              destination={destination}
+              setOrigin={setOrigin}
+              setDestination={setDestination}
+            />
           </div>
         </Col>
       </Row>

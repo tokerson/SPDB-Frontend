@@ -1,7 +1,12 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { compose, withProps, lifecycle } from 'recompose';
-import { withScriptjs, withGoogleMap, GoogleMap, DirectionsRenderer } from 'react-google-maps';
+import { compose, withProps } from 'recompose';
+import {
+  withScriptjs,
+  withGoogleMap,
+  GoogleMap,
+  DirectionsRenderer,
+  Marker,
+} from 'react-google-maps';
 
 const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 
@@ -14,36 +19,44 @@ const Map = compose(
   }),
   withScriptjs,
   withGoogleMap,
-  lifecycle({
-    componentDidMount() {
-      const DirectionsService = new google.maps.DirectionsService();
-
-      DirectionsService.route(
-        {
-          origin: new google.maps.LatLng(52.226683, 20.948148),
-          destination: new google.maps.LatLng(52.229176, 20.950806),
-          travelMode: google.maps.TravelMode.DRIVING,
-        },
-        (result, status) => {
-          if (status === google.maps.DirectionsStatus.OK) {
-            this.setState({
-              directions: result,
-            });
-          } else {
-            console.error(`error fetching directions ${result}`);
-          }
-        },
-      );
-    },
-  }),
 )((props) => {
+  const [directions, setDirections] = React.useState();
+
+  React.useEffect(() => {
+    console.log(props);
+    if (props.origin === null || props.destination === null) return;
+    console.log('here');
+    const DirectionsService = new google.maps.DirectionsService();
+    DirectionsService.route(
+      {
+        origin: props.origin,
+        destination: props.destination,
+        travelMode: google.maps.TravelMode.DRIVING,
+      },
+      (result, status) => {
+        if (status === google.maps.DirectionsStatus.OK) {
+          setDirections(result);
+        } else {
+          console.error(`error fetching directions ${result}`);
+        }
+      },
+    );
+  }, [props.origin, props.destination]);
   return (
-    <GoogleMap defaultZoom={16} defaultCenter={{ lat: 52.226683, lng: 20.948148 }}>
-      {props.directions && <DirectionsRenderer directions={props.directions} />}
+    <GoogleMap
+      defaultZoom={16}
+      defaultCenter={{ lat: 52.226683, lng: 20.948148 }}
+      onClick={(e) => {
+        props.setOrigin(e.latLng);
+      }}
+      onRightClick={(e) => {
+        props.setDestination(e.latLng);
+      }}
+    >
+      {directions && <DirectionsRenderer directions={directions} />}
+      {props.origin && <Marker position={props.origin} />}
+      {props.destination && <Marker position={props.destination} />}
     </GoogleMap>
   );
 });
-
-Map.propTypes = {};
-
 export default Map;

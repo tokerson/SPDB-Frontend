@@ -33,6 +33,7 @@
   "license": "MIT",
   "dependencies": {
     "@hot-loader/react-dom": "16.10.2",
+    "axios": "0.19.2",
     "bootstrap": "4.5.0",
     "connected-react-router": "6.5.2",
     "dotenv": "8.2.0",
@@ -44,6 +45,7 @@
     "react-hook-form": "5.7.2",
     "react-redux": "7.1.1",
     "react-router-dom": "5.1.2",
+    "react-select": "3.1.0",
     "reactstrap": "8.4.1",
     "recompose": "0.30.0",
     "redux": "4.0.4",
