@@ -24,7 +24,7 @@ const Map = compose(
 
   React.useEffect(() => {
     console.log(props);
-    if (props.origin === null || props.destination === null) return;
+    if (props.waypoints || props.origin === null || props.destination === null) return;
     console.log('here');
     const DirectionsService = new google.maps.DirectionsService();
     DirectionsService.route(
@@ -42,6 +42,36 @@ const Map = compose(
       },
     );
   }, [props.origin, props.destination]);
+
+  React.useEffect(() => {
+    const DirectionsService = new google.maps.DirectionsService();
+
+    if (props.waypoints) {
+      const waypoints = props.waypoints.map((waypoint) => ({
+        location: { lat: waypoint.location.lat, lng: waypoint.location.lng },
+        stopover: true,
+      }));
+      const origin = props.origin;
+      const destination = props.destination;
+
+      DirectionsService.route(
+        {
+          origin: origin,
+          destination: destination,
+          travelMode: google.maps.TravelMode.DRIVING,
+          waypoints: waypoints,
+        },
+        (result, status) => {
+          if (status === google.maps.DirectionsStatus.OK) {
+            setDirections(result);
+          } else {
+            console.error(`error fetching directions ${result}`);
+          }
+        },
+      );
+    }
+  }, [props.waypoints]);
+
   return (
     <GoogleMap
       defaultZoom={16}
@@ -54,8 +84,8 @@ const Map = compose(
       }}
     >
       {directions && <DirectionsRenderer directions={directions} />}
-      {props.origin && <Marker position={props.origin} />}
-      {props.destination && <Marker position={props.destination} />}
+      {!props.waypoints && props.origin && <Marker position={props.origin} />}
+      {!props.waypoints && props.destination && <Marker position={props.destination} />}
     </GoogleMap>
   );
 });

@@ -7,7 +7,7 @@ import Select from 'react-select';
 
 const HOST = 'http://localhost:8080';
 
-const RestrictionForm = ({ origin, destination }) => {
+const RestrictionForm = ({ origin, destination, setWaypoints }) => {
   const { register, errors, setValue, handleSubmit } = useForm();
   const [categories, setCategories] = React.useState({});
 
@@ -20,14 +20,38 @@ const RestrictionForm = ({ origin, destination }) => {
   }, []);
 
   const onSubmit = (data) => {
-    console.log(convertFormData(data));
+    const payload = prepareFormData(data);
+    const query = `${HOST}/api/waypoints?origin=${payload.origin}&destination=${
+      payload.destination
+    }${payload.searchingStart && `&searchingStart=${payload.searchingStart}`}${payload.timeInPoi &&
+      `&timeInPoi=${payload.timeInPoi}`}${payload.categories &&
+      `&categories=${payload.categories}`}${payload.additionalDistance &&
+      `&additionalDistance=${payload.additionalDistance}`}${payload.minRating &&
+      `&minRating=${payload.minRating}`}${payload.additionalTime &&
+      `&additionalTime=${payload.additionalTime}`}`;
+    console.log(payload, query);
+    axios
+      .get(query)
+      .then((res) => {
+        const { waypoints } = res.data;
+        console.log(res);
+        setWaypoints(waypoints);
+      })
+      .catch((err) => console.log(err));
   };
 
-  const convertFormData = (data) => {
+  const prepareFormData = (data) => {
     const convertHoursToSeconds = (timeString) => {
       //timeString should be in format HH:MM
+      if (timeString === '') return timeString;
       const [hour, minute] = timeString.trim().split(':');
       return hour * 3600 + minute * 60;
+    };
+
+    const parseCategories = (categories) => {
+      if (!categories) return '';
+      const categoriesIds = categories.map(({ value }) => value);
+      return categoriesIds.join(',');
     };
 
     return {
@@ -35,7 +59,8 @@ const RestrictionForm = ({ origin, destination }) => {
       timeInPoi: convertHoursToSeconds(data.timeInPoi),
       additionalTime: convertHoursToSeconds(data.additionalTime),
       searchingStart: convertHoursToSeconds(data.searchingStart),
-      additionalDistance: parseInt(data.additionalDistance) * 1000,
+      categories: parseCategories(data.categories),
+      additionalDistance: data.additionalDistance && parseInt(data.additionalDistance) * 1000,
     };
   };
 
@@ -45,6 +70,7 @@ const RestrictionForm = ({ origin, destination }) => {
         <FormGroup>
           <Label for="minRating">Select minimum rating of visited places</Label>
           <Input innerRef={register} type="select" name="minRating" id="minRating">
+            <option value={0}>0</option>
             <option value={1}>1</option>
             <option value={2}>2</option>
             <option value={3}>3</option>
@@ -153,6 +179,7 @@ const RestrictionForm = ({ origin, destination }) => {
 RestrictionForm.propTypes = {
   origin: PropTypes.object,
   destination: PropTypes.object,
+  setWaypoints: PropTypes.func.isRequired,
 };
 
 export default RestrictionForm;
