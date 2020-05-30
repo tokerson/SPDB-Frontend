@@ -7,7 +7,7 @@ import Select from 'react-select';
 
 const HOST = 'http://localhost:8080';
 
-const RestrictionForm = ({ origin, destination, setWaypoints, setLoading }) => {
+const RestrictionForm = ({ origin, destination, setWaypoints, setLoading, setTripData }) => {
   const { register, errors, setValue, handleSubmit } = useForm();
   const [categories, setCategories] = React.useState({});
 
@@ -32,11 +32,13 @@ const RestrictionForm = ({ origin, destination, setWaypoints, setLoading }) => {
       `&additionalTime=${payload.additionalTime}`}`;
     console.log(payload, query);
     axios
+      // .get(`${HOST}/dev/mocked_result`)
       .get(query)
       .then((res) => {
-        const { waypoints } = res.data;
+        const { waypoints, ...restData } = res.data;
         console.log(res);
         setWaypoints(waypoints);
+        setTripData(restData);
         setLoading(false);
       })
       .catch((err) => {
@@ -186,6 +188,7 @@ RestrictionForm.propTypes = {
   destination: PropTypes.object,
   setWaypoints: PropTypes.func.isRequired,
   setLoading: PropTypes.func.isRequired,
+  setTripData: PropTypes.func.isRequired,
 };
 
 export default RestrictionForm;

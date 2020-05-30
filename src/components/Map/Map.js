@@ -24,6 +24,7 @@ const Map = compose(
 
   React.useEffect(() => {
     console.log(props);
+    setDirections(undefined);
     if (props.waypoints || props.origin === null || props.destination === null) return;
     console.log('here');
     const DirectionsService = new google.maps.DirectionsService();
@@ -45,6 +46,7 @@ const Map = compose(
 
   React.useEffect(() => {
     const DirectionsService = new google.maps.DirectionsService();
+    setDirections(undefined);
 
     if (props.waypoints) {
       const waypoints = props.waypoints.map((waypoint) => ({
@@ -83,7 +85,7 @@ const Map = compose(
         props.setDestination(e.latLng);
       }}
     >
-      {directions && <DirectionsRenderer directions={directions} />}
+      {props.origin && props.destination && directions && <DirectionsRenderer directions={directions} />}
       {!props.waypoints && props.origin && <Marker position={props.origin} />}
       {!props.waypoints && props.destination && <Marker position={props.destination} />}
     </GoogleMap>
