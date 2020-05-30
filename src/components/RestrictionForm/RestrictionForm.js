@@ -7,7 +7,7 @@ import Select from 'react-select';
 
 const HOST = 'http://localhost:8080';
 
-const RestrictionForm = ({ origin, destination, setWaypoints }) => {
+const RestrictionForm = ({ origin, destination, setWaypoints, setLoading }) => {
   const { register, errors, setValue, handleSubmit } = useForm();
   const [categories, setCategories] = React.useState({});
 
@@ -21,6 +21,7 @@ const RestrictionForm = ({ origin, destination, setWaypoints }) => {
 
   const onSubmit = (data) => {
     const payload = prepareFormData(data);
+    setLoading(true);
     const query = `${HOST}/api/waypoints?origin=${payload.origin}&destination=${
       payload.destination
     }${payload.searchingStart && `&searchingStart=${payload.searchingStart}`}${payload.timeInPoi &&
@@ -36,8 +37,12 @@ const RestrictionForm = ({ origin, destination, setWaypoints }) => {
         const { waypoints } = res.data;
         console.log(res);
         setWaypoints(waypoints);
+        setLoading(false);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+      });
   };
 
   const prepareFormData = (data) => {
@@ -180,6 +185,7 @@ RestrictionForm.propTypes = {
   origin: PropTypes.object,
   destination: PropTypes.object,
   setWaypoints: PropTypes.func.isRequired,
+  setLoading: PropTypes.func.isRequired,
 };
 
 export default RestrictionForm;
