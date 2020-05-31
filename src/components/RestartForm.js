@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Card, Button, Row, Col } from 'reactstrap';
 
-// {tripData.map((element) => <p>{`${element}: ${tripData[element]}`}</p>)}
+// Form displaying statisticts about original trip and generated trip.
+// It allows to start the process of trip generation from the beginning.
 
 const RestartForm = ({ tripData, onReset }) => {
   const formatTime = (timeInSeconds) => new Date(timeInSeconds * 1000).toISOString().substr(11, 8);

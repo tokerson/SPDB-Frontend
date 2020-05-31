@@ -5,6 +5,9 @@ import RestartForm from './RestartForm';
 import Map from './Map/Map';
 import InstructionsAlert from './InstructionsAlert';
 
+// This is the component responsible for state management. Due to small size of the application, redux was not used in this project.
+// The data flow is by passing props to children and modyfing data inside them.
+
 const LandingPage = () => {
   const [origin, setOrigin] = React.useState(null);
   const [destination, setDestination] = React.useState(null);
@@ -17,7 +20,6 @@ const LandingPage = () => {
   React.useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        console.log(position.coords);
         setDefaultCenter({ lat: position.coords.latitude, lng: position.coords.longitude });
       },
       (error) => console.log(error),

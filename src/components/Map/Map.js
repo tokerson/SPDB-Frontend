@@ -11,6 +11,7 @@ import { Card } from 'reactstrap';
 
 const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 
+// component for displaying Google Map and rendering paths between origin, destination and given waypoints.
 const Map = compose(
   withProps({
     googleMapURL: `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&v=3.exp&libraries=geometry,drawing,places`,
@@ -70,6 +71,7 @@ const Map = compose(
         },
         (result, status) => {
           if (status === google.maps.DirectionsStatus.OK) {
+            // the modification of infoWindow for each marker to include place's name and rating.
             const numberOfLegs = result.routes[0].legs.length;
             result.routes[0].legs[0].start_address = `<h5>Origin</h5><p>${
               result.routes[0].legs[0].start_address

@@ -7,6 +7,9 @@ import Select from 'react-select';
 
 const HOST = 'http://localhost:8080';
 
+// getting user data about restrictions applied when generating a trip
+// origin and destination fields are set by clicking on the Map component
+
 const RestrictionForm = ({
   origin,
   destination,
@@ -21,7 +24,6 @@ const RestrictionForm = ({
   React.useEffect(() => {
     register({ name: 'categories' });
     axios.get(`${HOST}/api/categories`).then((res) => {
-      console.log(res.data);
       setCategories(res.data);
     });
   }, []);
@@ -29,6 +31,8 @@ const RestrictionForm = ({
   const onSubmit = (data) => {
     const payload = prepareFormData(data);
     setLoading(true);
+
+    // query is created based on given parameters, if some are missing, they are not included in the query params
     const query = `${HOST}/api/waypoints?origin=${payload.origin}&destination=${
       payload.destination
     }${payload.searchingStart !== '' ? `&searchingStart=${payload.searchingStart}` : ''}${
@@ -39,7 +43,6 @@ const RestrictionForm = ({
       payload.additionalTime !== '' ? `&additionalTime=${payload.additionalTime}` : ''
     }`;
     axios
-      // .get(`${HOST}/dev/mocked_result`)
       .get(query)
       .then((res) => {
         const { waypoints, ...restData } = res.data;

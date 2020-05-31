@@ -1,6 +1,8 @@
 import React from 'react';
 import { UncontrolledAlert } from 'reactstrap';
 
+// Alert displayed with basic instructions on how to use the application.
+
 const InstructionsAlert = () => {
   return (
     <UncontrolledAlert color="info" style={{ width: '100%' }}>
