@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Fade, Spinner } from 'reactstrap';
+import { Row, Col, Fade, Spinner, Alert } from 'reactstrap';
 import RestrictionForm from './RestrictionForm/RestrictionForm';
 import RestartForm from './RestartForm';
 import Map from './Map/Map';
@@ -11,6 +11,7 @@ const LandingPage = () => {
   const [waypoints, setWaypoints] = React.useState();
   const [tripData, setTripData] = React.useState();
   const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState();
 
   const resetData = () => {
     setWaypoints(undefined);
@@ -32,6 +33,7 @@ const LandingPage = () => {
           setWaypoints={setWaypoints}
           destination={destination}
           setTripData={setTripData}
+          setError={setError}
         />
       </Fade>
     );
@@ -41,7 +43,17 @@ const LandingPage = () => {
       <Row>
         <InstructionsAlert />
       </Row>
-      <Row>
+      <Row style={{ position: 'relative' }}>
+        {error && (
+          <Alert
+            style={{ position: 'absolute', top: 0, left: 0, width: '100%', zIndex: '2' }}
+            color="danger"
+            isOpen={error !== undefined}
+            toggle={() => setError(undefined)}
+          >
+            {error}
+          </Alert>
+        )}
         <Col>
           {loading ? (
             <Fade

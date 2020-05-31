@@ -7,7 +7,14 @@ import Select from 'react-select';
 
 const HOST = 'http://localhost:8080';
 
-const RestrictionForm = ({ origin, destination, setWaypoints, setLoading, setTripData }) => {
+const RestrictionForm = ({
+  origin,
+  destination,
+  setWaypoints,
+  setLoading,
+  setTripData,
+  setError,
+}) => {
   const { register, errors, setValue, handleSubmit } = useForm();
   const [categories, setCategories] = React.useState({});
 
@@ -24,25 +31,24 @@ const RestrictionForm = ({ origin, destination, setWaypoints, setLoading, setTri
     setLoading(true);
     const query = `${HOST}/api/waypoints?origin=${payload.origin}&destination=${
       payload.destination
-    }${payload.searchingStart && `&searchingStart=${payload.searchingStart}`}${payload.timeInPoi &&
-      `&timeInPoi=${payload.timeInPoi}`}${payload.categories &&
-      `&categories=${payload.categories}`}${payload.additionalDistance &&
-      `&additionalDistance=${payload.additionalDistance}`}${payload.minRating &&
-      `&minRating=${payload.minRating}`}${payload.additionalTime &&
-      `&additionalTime=${payload.additionalTime}`}`;
-    console.log(payload, query);
+    }${payload.searchingStart !== '' ? `&searchingStart=${payload.searchingStart}` : ''}${
+      payload.timeInPoi !== '' ? `&timeInPoi=${payload.timeInPoi}` : ''
+    }${payload.categories !== '' ? `&categories=${payload.categories}` : ''}${
+      payload.additionalDistance !== '' ? `&additionalDistance=${payload.additionalDistance}` : ''
+    }${payload.minRating !== '' ? `&minRating=${payload.minRating}` : ''}${
+      payload.additionalTime !== '' ? `&additionalTime=${payload.additionalTime}` : ''
+    }`;
     axios
       // .get(`${HOST}/dev/mocked_result`)
       .get(query)
       .then((res) => {
         const { waypoints, ...restData } = res.data;
-        console.log(res);
         setWaypoints(waypoints);
         setTripData(restData);
         setLoading(false);
       })
       .catch((err) => {
-        console.log(err);
+        setError(err.response.data)
         setLoading(false);
       });
   };
@@ -189,6 +195,7 @@ RestrictionForm.propTypes = {
   setWaypoints: PropTypes.func.isRequired,
   setLoading: PropTypes.func.isRequired,
   setTripData: PropTypes.func.isRequired,
+  setError: PropTypes.func.isRequired,
 };
 
 export default RestrictionForm;
