@@ -33,7 +33,7 @@ const Map = compose(
         origin: props.origin,
         destination: props.destination,
         travelMode: google.maps.TravelMode.DRIVING,
-        avoidHighways: true
+        avoidHighways: true,
       },
       (result, status) => {
         if (status === google.maps.DirectionsStatus.OK) {
@@ -71,10 +71,10 @@ const Map = compose(
             result.routes[0].legs[0].start_address = `<h5>Origin</h5><p>${
               result.routes[0].legs[0].start_address
             }</p>`;
-            for (let i = 1; i < numberOfLegs - 1; i++) {
+            for (let i = 1; i < numberOfLegs; i++) {
               const address = result.routes[0].legs[i].start_address;
               result.routes[0].legs[i].start_address = `<h5>${
-                props.waypoints[i].name
+                props.waypoints[i - 1].name
               }</h5><p>${address}</p>`;
             }
             result.routes[0].legs[numberOfLegs - 1].end_address = `<h5>Destination</h5><p>${
@@ -92,7 +92,7 @@ const Map = compose(
   return (
     <GoogleMap
       defaultZoom={16}
-      defaultCenter={{ lat: 52.226683, lng: 20.948148 }}
+      defaultCenter={props.defaultCenter}
       onClick={(e) => {
         props.setOrigin(e.latLng);
       }}

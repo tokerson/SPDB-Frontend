@@ -12,6 +12,21 @@ const LandingPage = () => {
   const [tripData, setTripData] = React.useState();
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState();
+  const [defaultCenter, setDefaultCenter] = React.useState({ lat: 52.226683, lng: 20.948148 });
+
+  React.useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        console.log(position.coords);
+        setDefaultCenter({ lat: position.coords.latitude, lng: position.coords.longitude });
+      },
+      (error) => console.log(error),
+      {
+        enableHighAccuracy: true,
+        maximumAge: 0,
+      },
+    );
+  }, []);
 
   const resetData = () => {
     setWaypoints(undefined);
@@ -85,6 +100,7 @@ const LandingPage = () => {
               waypoints={waypoints}
               setOrigin={setOrigin}
               setDestination={setDestination}
+              defaultCenter={defaultCenter}
             />
           </div>
         </Col>
