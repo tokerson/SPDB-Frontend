@@ -65,6 +65,19 @@ const Map = compose(
         },
         (result, status) => {
           if (status === google.maps.DirectionsStatus.OK) {
+            const numberOfLegs = result.routes[0].legs.length;
+            result.routes[0].legs[0].start_address = `<h5>Origin</h5><p>${
+              result.routes[0].legs[0].start_address
+            }</p>`;
+            for (let i = 1; i < numberOfLegs - 1; i++) {
+              const address = result.routes[0].legs[i].start_address;
+              result.routes[0].legs[i].start_address = `<h5>${
+                props.waypoints[i].name
+              }</h5><p>${address}</p>`;
+            }
+            result.routes[0].legs[numberOfLegs - 1].end_address = `<h5>Destination</h5><p>${
+              result.routes[0].legs[numberOfLegs - 1].end_address
+            }</p>`;
             setDirections(result);
           } else {
             console.error(`error fetching directions ${result}`);
@@ -85,7 +98,9 @@ const Map = compose(
         props.setDestination(e.latLng);
       }}
     >
-      {props.origin && props.destination && directions && <DirectionsRenderer directions={directions} />}
+      {props.origin && props.destination && directions && (
+        <DirectionsRenderer directions={directions} />
+      )}
       {!props.waypoints && props.origin && <Marker position={props.origin} />}
       {!props.waypoints && props.destination && <Marker position={props.destination} />}
     </GoogleMap>
