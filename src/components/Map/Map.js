@@ -78,7 +78,7 @@ const Map = compose(
               const address = result.routes[0].legs[i].start_address;
               result.routes[0].legs[i].start_address = `<h5>${
                 props.waypoints[i - 1].name
-              }</h5><p>${address}</p>`;
+              }</h5><p>${address}</p><p><b>Rating:</b> ${props.waypoints[i - 1].rating.avgRating}</p>`;
             }
             result.routes[0].legs[numberOfLegs - 1].end_address = `<h5>Destination</h5><p>${
               result.routes[0].legs[numberOfLegs - 1].end_address
