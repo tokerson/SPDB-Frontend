@@ -34,7 +34,7 @@ const RestartForm = ({ tripData, onReset }) => {
         Max. time spent in one place: <b>{formatTime(tripData.parameters.timeInPoi)}</b>
       </p>
       <p>
-        Min. rating of a plce: <b>{tripData.parameters.minimalRating}</b>
+        Min. rating of a place: <b>{tripData.parameters.minimalRating}</b>
       </p>
       <p>
         Max. time added to trip time: <b>{formatTime(tripData.parameters.additionalTime)}</b>

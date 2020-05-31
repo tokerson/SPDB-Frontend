@@ -35,7 +35,7 @@ const RestrictionForm = ({
       payload.timeInPoi !== '' ? `&timeInPoi=${payload.timeInPoi}` : ''
     }${payload.categories !== '' ? `&categories=${payload.categories}` : ''}${
       payload.additionalDistance !== '' ? `&additionalDistance=${payload.additionalDistance}` : ''
-    }${payload.minRating !== '' ? `&minRating=${payload.minRating}` : ''}${
+    }${payload.minimalRating !== '' ? `&minimalRating=${payload.minimalRating}` : ''}${
       payload.additionalTime !== '' ? `&additionalTime=${payload.additionalTime}` : ''
     }`;
     axios
@@ -81,8 +81,8 @@ const RestrictionForm = ({
     <Card style={{ padding: '1rem' }} className="shadow-lg rounded">
       <Form onSubmit={handleSubmit(onSubmit)}>
         <FormGroup>
-          <Label for="minRating">Select minimum rating of visited places</Label>
-          <Input innerRef={register} type="select" name="minRating" id="minRating">
+          <Label for="minimalRating">Select minimum rating of visited places</Label>
+          <Input innerRef={register} type="select" name="minimalRating" id="minimalRating">
             <option value={0}>0</option>
             <option value={1}>1</option>
             <option value={2}>2</option>
