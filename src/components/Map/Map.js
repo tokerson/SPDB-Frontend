@@ -7,6 +7,7 @@ import {
   DirectionsRenderer,
   Marker,
 } from 'react-google-maps';
+import { Card } from 'reactstrap';
 
 const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 
@@ -14,19 +15,19 @@ const Map = compose(
   withProps({
     googleMapURL: `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&v=3.exp&libraries=geometry,drawing,places`,
     loadingElement: <div style={{ height: `100%` }} />,
-    containerElement: <div style={{ height: `800px` }} />,
+    containerElement: <div style={{ height: `800px`, position: 'relative' }} />,
     mapElement: <div style={{ height: `100%` }} />,
   }),
   withScriptjs,
   withGoogleMap,
 )((props) => {
   const [directions, setDirections] = React.useState();
+  const [route, setRoute] = React.useState();
 
   React.useEffect(() => {
-    console.log(props);
     setDirections(undefined);
+    setRoute(undefined);
     if (props.waypoints || props.origin === null || props.destination === null) return;
-    console.log('here');
     const DirectionsService = new google.maps.DirectionsService();
     DirectionsService.route(
       {
@@ -37,6 +38,8 @@ const Map = compose(
       },
       (result, status) => {
         if (status === google.maps.DirectionsStatus.OK) {
+          const { distance, duration } = result.routes[0].legs[0];
+          setRoute({ distance, duration });
           setDirections(result);
         } else {
           console.error(`error fetching directions ${result}`);
@@ -90,26 +93,46 @@ const Map = compose(
   }, [props.waypoints]);
 
   return (
-    <GoogleMap
-      defaultZoom={16}
-      defaultCenter={props.defaultCenter}
-      onClick={(e) => {
-        if (!props.waypoints) {
-          props.setOrigin(e.latLng);
-        }
-      }}
-      onRightClick={(e) => {
-        if (!props.waypoints) {
-          props.setDestination(e.latLng);
-        }
-      }}
-    >
-      {props.origin && props.destination && directions && (
-        <DirectionsRenderer directions={directions} />
+    <>
+      <GoogleMap
+        defaultZoom={16}
+        defaultCenter={props.defaultCenter}
+        onClick={(e) => {
+          if (!props.waypoints) {
+            props.setOrigin(e.latLng);
+          }
+        }}
+        onRightClick={(e) => {
+          if (!props.waypoints) {
+            props.setDestination(e.latLng);
+          }
+        }}
+      >
+        {props.origin && props.destination && directions && (
+          <DirectionsRenderer directions={directions} />
+        )}
+        {!props.waypoints && !directions && props.origin && <Marker position={props.origin} />}
+        {!props.waypoints && !directions && props.destination && (
+          <Marker position={props.destination} />
+        )}
+      </GoogleMap>
+      {!props.waypoints && route && (
+        <Card
+          className="shadow-lg rounded"
+          style={{
+            position: 'absolute',
+            fontSize: '.8rem',
+            bottom: '0rem',
+            left: '0rem',
+            padding: '1rem',
+          }}
+        >
+          <h5>Trip statistics</h5>
+          <p>Distance: {route.distance.text}</p>
+          <p>Duration: {route.duration.text}</p>
+        </Card>
       )}
-      {!props.waypoints && props.origin && <Marker position={props.origin} />}
-      {!props.waypoints && props.destination && <Marker position={props.destination} />}
-    </GoogleMap>
+    </>
   );
 });
 export default Map;
