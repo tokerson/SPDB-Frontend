@@ -94,10 +94,14 @@ const Map = compose(
       defaultZoom={16}
       defaultCenter={props.defaultCenter}
       onClick={(e) => {
-        props.setOrigin(e.latLng);
+        if (!props.waypoints) {
+          props.setOrigin(e.latLng);
+        }
       }}
       onRightClick={(e) => {
-        props.setDestination(e.latLng);
+        if (!props.waypoints) {
+          props.setDestination(e.latLng);
+        }
       }}
     >
       {props.origin && props.destination && directions && (
