@@ -33,6 +33,7 @@ const Map = compose(
         origin: props.origin,
         destination: props.destination,
         travelMode: google.maps.TravelMode.DRIVING,
+        avoidHighways: true
       },
       (result, status) => {
         if (status === google.maps.DirectionsStatus.OK) {
@@ -61,6 +62,7 @@ const Map = compose(
           origin: origin,
           destination: destination,
           travelMode: google.maps.TravelMode.DRIVING,
+          avoidHighways: true,
           waypoints: waypoints,
         },
         (result, status) => {
